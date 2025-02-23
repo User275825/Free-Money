@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бесплатные деньги</title>
+    <style>
+        /* Базовые сбросы стилей */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Стили body */
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Основной контейнер */
+        .main-content {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Заголовки */
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        /* Поля ввода */
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* Кнопка */
+        .submit-btn {
+            background: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Видео */
+        #fullscreen-video {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 1000;
+        }
+
+        /* Уведомление */
+        #notification {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.2);
+            z-index: 2000;
+            font-size: 1.8rem;
+            color: #27ae60;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Основной контент -->
+    <div class="main-content">
+        <h1>🤑 Бесплатные деньги!</h1>
+        <h2>Введите имя и номер карты для получения</h2>
+        
+        <input type="text" 
+               class="input-field" 
+               placeholder="Ваше имя"
+               id="nameInput">
+
+        <input type="text" 
+               class="input-field" 
+               placeholder="Номер карты"
+               id="cardInput">
+
+        <button class="submit-btn" onclick="handleSubmit()">
+            Получить деньги
+        </button>
+    </div>
+
+    <!-- Всплывающее уведомление -->
+    <div id="notification">Запрос обрабатывается...</div>
+
+    <!-- Видео элемент -->
+    <video id="fullscreen-video">
+        <source src="media/video.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео
+    </video>
+
+    <script>
+        function handleSubmit() {
+            const name = document.getElementById('nameInput').value;
+            const card = document.getElementById('cardInput').value;
+            const notification = document.getElementById('notification');
+            const video = document.getElementById('fullscreen-video');
+
+            // Проверка заполнения полей
+            if(!name || !card) {
+                alert('Пожалуйста, заполните все поля!');
+                return;
+            }
+
+            // Показ уведомления
+            notification.style.display = 'block';
+
+            // Запуск видео через 5 секунд
+            setTimeout(() => {
+                notification.style.display = 'none';
+                showFullscreenVideo(video);
+            }, 5000);
+        }
+
+        function showFullscreenVideo(video) {
+            // Показать видео
+            video.style.display = 'block';
+            
+            // Полноэкранный режим
+            if(video.requestFullscreen) {
+                video.requestFullscreen().catch(console.error);
+            }
+            
+            // Автовоспроизведение
+            video.play().catch(error => {
+                console.error('Ошибка воспроизведения:', error);
+                video.muted = true;
+                video.play();
+            });
+
+            // Блокировка управления
+            video.controls = false;
+            video.addEventListener('pause', () => video.play());
+            video.addEventListener('contextmenu', e => e.preventDefault());
+        }
+
+        // Выход из полноэкранного режима
+        document.addEventListener('fullscreenchange', () => {
+            if(!document.fullscreenElement) {
+                const video = document.getElementById('fullscreen-video');
+                video.style.display = 'none';
+                video.pause();
+            }
+        });
+    </script>
+</body>
+</html>
